@@ -1,0 +1,70 @@
+#!/bin/bash
+
+error_count=0
+error_cases=""
+
+# _add_error ERROR_FUNCTION MESSAGE
+function _add_error()
+{
+  error_count=$((${error_count} + 1))
+  error_cases="$1 ${error_cases}"
+  _color_msg 31 "fail " -n
+}
+
+# Color function
+# Input: $1->color, $2->message, $3->newline or not
+function _color_msg
+{
+  echo -e $3 "\033[$1m$2\033[0m"
+}
+
+function _get_test_cases()
+{
+  for line in $(cat $1 | grep "^function test_"); do
+    if [ "${line}" == "function" ]; then
+      continue
+    fi
+
+    echo ${line:0:-2}
+  done
+}
+
+# assert_eq VALUE1 VALUE2
+function assert_eq()
+{
+  if [ "${1}" == "${2}" ]; then
+    _color_msg 32 "o" -n
+  else
+    _add_error ${FUNCNAME[1]}
+    _color_msg 33 "x($(caller | awk -F " " {'print $1'}))" -n
+  fi
+}
+
+# assert_file_exist FILE_PATH
+function assert_file_exist()
+{
+  if [ -f "$1" ]; then
+    _color_msg 32 "o" -n
+  else
+    _add_error ${FUNCNAME[1]}
+    _color_msg 33 "x($(caller | awk -F " " {'print $1'}))" -n
+  fi
+
+}
+
+# unittest TEST_CASES_FILE
+#   e.g. unittest bash_db_tests.sh
+function unittest()
+{
+  echo -e
+
+  for test_case in $(_get_test_cases $1); do
+    echo -ne "Test function "
+    _color_msg 35 "${test_case}" -n
+    echo -ne " ... "
+    ${test_case}
+    echo -e
+  done
+
+  echo -e "\nErrors (${error_count}): ${error_cases}"
+}
