@@ -52,13 +52,19 @@ function assert_file_exist()
 
 }
 
-# unittest TEST_CASES_FILE
+# unittest TEST_CASES_FILE [TEST_FUNCTION]
 #   e.g. unittest bash_db_tests.sh
 function unittest()
 {
   echo -e
 
-  for test_case in $(_get_test_cases $1); do
+  if [ -z "$2" ]; then
+    test_cases="$(_get_test_cases $1)"
+  else
+    test_cases="$2"
+  fi
+
+  for test_case in "$test_cases"; do
     echo -ne "Test function "
     _color_msg 35 "${test_case}" -n
     echo -ne " ... "

@@ -48,6 +48,11 @@ Test function test_fun2 ... o
 Errors (0):
 ```
 
+If you want to run `test_fun1` only, you can pass it as a argument to
+`unittest` as follows. This is useful for debugging on a single test case.
+```bash
+unittest $0 test_fun1
+```
 
 Assertions
 ==========
