@@ -8,7 +8,6 @@ function _add_error()
 {
   error_count=$((${error_count} + 1))
   error_cases="$1 ${error_cases}"
-  _color_msg 31 "fail " -n
 }
 
 # Color function
@@ -33,6 +32,17 @@ function _get_test_cases()
 function assert_eq()
 {
   if [ "${1}" == "${2}" ]; then
+    _color_msg 32 "o" -n
+  else
+    _add_error ${FUNCNAME[1]}
+    _color_msg 31 "x($(caller | awk -F " " {'print $1'}))" -n
+  fi
+}
+
+# assert_file_empty FILE_PATH
+function assert_file_empty
+{
+  if [ ! -s "$1" ]; then
     _color_msg 32 "o" -n
   else
     _add_error ${FUNCNAME[1]}
