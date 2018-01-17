@@ -74,7 +74,7 @@ function unittest()
     test_cases="$2"
   fi
 
-  for test_case in "$test_cases"; do
+  for test_case in $test_cases; do
     echo -ne "Test function "
     _color_msg 35 "${test_case}" -n
     echo -ne " ... "
